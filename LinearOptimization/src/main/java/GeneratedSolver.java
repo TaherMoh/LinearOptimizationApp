@@ -1,0 +1,27 @@
+
+public class GeneratedSolver {
+
+	public static void main(String[] args) {
+		double X1 = 0;
+		double X2 = 0;
+		double z = 0;
+
+		for(double x1=0; x1<7.0; x1+=0.01) {
+			for(double x2=0; x2<7.0; x2+=0.01) {
+				if(x1 <= 7
+				     && x2 <=6
+				     && x1 + x2 <= 9
+				     && 3*x1 + x2 <= 18) {
+					if(3*x1 + 2*x2 > z){
+						z = 3*x1 + 2*x2 ;
+						X1 = x1;
+						X2 = x2;
+					}
+				}
+			}
+		}
+		System.out.println("Z = " + String.format("%.2f", z));
+		System.out.println("X1 = " + String.format("%.2f", X1));
+		System.out.println("X2 = " + String.format("%.2f", X2));
+	}
+}
