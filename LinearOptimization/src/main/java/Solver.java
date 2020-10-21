@@ -10,15 +10,26 @@ public class Solver {
 		ArrayList<ConstrainedVariable> listOfVar = new ArrayList<ConstrainedVariable>();
 		ArrayList<String> constraints = new ArrayList<String>();
 		
-		listOfVar.add(new ConstrainedVariable("x1", 3, 0, 7));
-		listOfVar.add(new ConstrainedVariable("x2", 2, 0, 6));
+		listOfVar.add(new ConstrainedVariable("x1", 0, 0, 0.15));
+		listOfVar.add(new ConstrainedVariable("x2", 0.71, 0, 0.35));
+		listOfVar.add(new ConstrainedVariable("x3", 1, 0, 0.15));
+		listOfVar.add(new ConstrainedVariable("x4", 1, 0, 0.6));
+				
+		constraints.add("x1 >= 0.1");
+		constraints.add("x1 <= 0.15");
 		
-		constraints.add("x1 <= 7");
-		constraints.add("x2 <=6");
-		constraints.add("x1 + x2 <= 9");
-		constraints.add("3*x1 + x2 <= 18");
+		constraints.add("x2 >= 0.15");
+		constraints.add("x2 <= 0.35");
 		
-		String maximizeFormula = "3*x1 + 2*x2 > z";
+		constraints.add("x3 <= 0.25");
+		constraints.add("x3 >= 0.15");
+		
+		constraints.add("x4 >=  0.4");
+		constraints.add("x4 <=  0.6");
+
+		constraints.add("x1 + x2 + x3 + x4 == 1");
+		
+		String maximizeFormula = "0 * x1 + 0.71 * x2 + 1 * x3 + 1 * x4 > z";
 		
 		File file = new File("src\\main\\java\\GeneratedSolver.java");
 		if(!file.exists()) {
@@ -30,7 +41,12 @@ public class Solver {
 	    
 	    writer.close();
 		
-		;
+		double a = 0.49;
+		double b = 0.51;
+		
+		if(a+b == 1) {
+			System.out.println("yes");
+		}
 	}
 	
 	@SuppressWarnings("unused")
@@ -60,7 +76,7 @@ public class Solver {
 
 		sb.append("\n");
 		
-		// For loop
+		// For loops
 		int count = 2;
 		for(ConstrainedVariable x: listOfVar) {
 			// Tabbing
@@ -68,11 +84,21 @@ public class Solver {
 				sb.append("\t");
 				
 			sb.append("for(double " + x.getName().toLowerCase() + "=0; "
-					+ x.getName().toLowerCase() + "<" + max + "; "
+					+ x.getName().toLowerCase() + "<=" + max + "; "
 					+ x.getName().toLowerCase() + "+=0.01) {");
 			sb.append("\n");
 			
 			count++;
+		}
+		
+		// Tabbing
+		for(ConstrainedVariable x: listOfVar) {
+			for(int t = 0; t<count; t++)
+			sb.append("\t");
+			sb.append(x.getName().toLowerCase() + 
+					"= Double.parseDouble(String.format(\"%.2f\", " + 
+					x.getName().toLowerCase() + "));");
+			sb.append("\n");
 		}
 		
 		// Tabbing
@@ -135,17 +161,13 @@ public class Solver {
 		sb.append("}");
 		sb.append("\n");
 
-		count--;
-		for(int t = 0; t<count; t++)
-			sb.append("\t");
-		sb.append("}");
-		sb.append("\n");
-		
-		count--;
-		for(int t = 0; t<count; t++)
-			sb.append("\t");
-		sb.append("}");
-		sb.append("\n");
+		for(int x=0; x<listOfVar.size(); x++) {
+			count--;
+			for(int t = 0; t<count; t++)
+				sb.append("\t");
+			sb.append("}");
+			sb.append("\n");
+		}
 
 		for(int t = 0; t<count; t++)
 			sb.append("\t");
