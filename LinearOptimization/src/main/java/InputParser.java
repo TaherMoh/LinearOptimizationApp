@@ -3,40 +3,20 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class inputParser {
+public class InputParser {
 	ArrayList<ConstrainedVariable> constrainedVariables;
+	ArrayList<String> constraints;
+	String[] weights;
+	String formula;
+	Double step;
 	
-	public void InputParser() {
+	public InputParser() {
 		constrainedVariables = new ArrayList<ConstrainedVariable>();
+		constraints = new ArrayList<String>();
 	}
 	
-	public ArrayList<ConstrainedVariable> parseInput() throws FileNotFoundException{
-		Scanner scanner = new Scanner(new File("input.txt"));
-		while (scanner.hasNextLine()) {
-		   String line = scanner.nextLine();
-		   
-		   System.out.println(line);
-		   // process the line
-		}
-		
-		return constrainedVariables;
-	}
-	
-	public static int countNumberOfVarsInConstrained(String line, ArrayList<ConstrainedVariable> constrainedVariables) {
-		int numVar = 0;
-		
-		for(ConstrainedVariable x: constrainedVariables) {
-			if(line.contains(x.getName())) {
-				numVar++;
-			}
-		}
-		
-		return numVar;
-	}
-	
-	public static void main(String args[]) throws FileNotFoundException {
-		ArrayList<ConstrainedVariable> constrainedVariables =  new ArrayList<ConstrainedVariable>();;
-		ArrayList<String> constraints = new ArrayList<String>();
+	public ArrayList<Object> parseInput() throws FileNotFoundException{
+		ArrayList<Object> returnVal = new ArrayList<Object>();
 		
 		Scanner scanner = new Scanner(new File("src\\main\\java\\input.txt"));
 		while (scanner.hasNextLine()) {
@@ -44,17 +24,36 @@ public class inputParser {
 				   
 		   // Variable line
 		   if(line.contains("var"))
-			  constrainedVariables.add(new ConstrainedVariable(line.substring(4), -1, 9999, -9999));
+			  constrainedVariables.add(new ConstrainedVariable(line.substring(4).trim(), -1, 9999, -9999));
 
-		   if(line.contains("subject to ")) {
+		   if(line.contains("weights")) {
+			   String varWeights = line.substring(8).trim();
+			   weights = varWeights.split(",");
+			   
+			   for(int x=0; x<weights.length; x++) {
+				   weights[x] = weights[x].trim();
+				   
+				   constrainedVariables.get(x).setWeight(Double.parseDouble(weights[x]));
+			   }
+		   }
+		   
+		   if(line.contains("maximize"))
+			   formula = line.substring(9).trim();
+		   
+		   if(line.contains("step"))
+			   step = Double.parseDouble(line.substring(5).trim());
+		   
+		   if(line.contains("subject to")) {
 			   if(countNumberOfVarsInConstrained(line, constrainedVariables) > 1) {
-				   constraints.add(line.substring(line.indexOf(":")+1, line.indexOf(";")).trim());
+				   constraints.add(line.substring(line.indexOf(":")+1).trim());
 			   }else {
+				   constraints.add(line.substring(line.indexOf(":")+1).trim());
+
 				   // it's a single var constraint
 				   // check if lower than lower bound, update if needed
 				   // check if higher than higher bound, update if needed
 				   
-				   String singleVarCons = line.substring(line.indexOf(":")+1, line.indexOf(";")).trim();
+				   String singleVarCons = line.substring(line.indexOf(":")+1).trim();
 				   
 				   for(ConstrainedVariable x: constrainedVariables) {
 					   if(singleVarCons.contains(x.getName())) {
@@ -99,16 +98,29 @@ public class inputParser {
 				   }
 			   }
 		   }
-		   // System.out.println(line);
-		   // process the line
 		}
 		
-		for(ConstrainedVariable x: constrainedVariables) {
-			System.out.println(x.getLowerLimit() + ">" + x.getName() + ">" + x.getUpperLimit());
-		}
-		for(String s: constraints) {
-			System.out.println(s);
-		}
 		scanner.close();
+		
+		returnVal.add(constrainedVariables);
+		returnVal.add(constraints);
+		returnVal.add(formula);
+		returnVal.add(step);
+		
+		return returnVal;
 	}
+	
+	public static int countNumberOfVarsInConstrained(String line, ArrayList<ConstrainedVariable> constrainedVariables) {
+		int numVar = 0;
+		
+		for(ConstrainedVariable x: constrainedVariables) {
+			if(line.contains(x.getName())) {
+				numVar++;
+			}
+		}
+		
+		return numVar;
+	}
+	
+	
 }
