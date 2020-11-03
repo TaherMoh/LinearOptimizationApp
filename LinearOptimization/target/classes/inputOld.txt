@@ -1,0 +1,18 @@
+var: x1
+var: x2
+var: x3
+
+maximize: x1 + 2*x2 + 3*x3
+
+subject to: x1 + x2 <=  9
+subject to: 3*x1 + x2 <= 18
+subject to: x1 <=  7
+subject to: x2 <=  6
+subject to: x3 <=  6
+subject to: x1 >=  0
+subject to: x2 >=  0
+subject to: x3 >=  0
+
+step: 1.0
+
+end
