@@ -40,34 +40,57 @@ class SubmitInput extends Component {
   }
 
   async handleSubmit() {
-    alert('Text was submitted: ' + this.state.textAreaValue);
+    
+    // let arr = this.state.textAreaValue.split("\n");
+
+    // for await(const text of arr){
+    //   if(text.includes("maximize")){
+    //     setTimeout(() => {
+    //       console.log(text);
+
+    //       // POST request using fetch with async/await
+    //       const requestOptions = {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: this.state.textAreaValue,
+    //       };
+
+    //       // Fetch another API// POST request using fetch with async/await
+    //       const requestOptions2 = {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: text.trim(),
+    //       };
+
+    //       this.handlePosts(requestOptions, requestOptions2);
+    //     }, 3000);
+          
+    //   };
+    // }
 
     // POST request using fetch with async/await
     const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: this.state.textAreaValue,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: this.state.textAreaValue,
     };
 
-    fetch('http://localhost:8080/test_Input', requestOptions).then(function (response) {
-        if (response.ok) {
-            return response.json();
-        } else {
-            return Promise.reject(response);
-        }
-    }).then(result => {
-        console.log(result);
+    fetch('http://localhost:8080/test_GLPK', requestOptions).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).then(result => {
+            console.log("Wrote to file " + result.log);
+        });
 
-        this.setState({
-            ...this.state,
-            values: this.state.textAreaValue,
-        })
-    })
+    alert('Text was submitted: \n' + this.state.textAreaValue);
   }
 
   render() {
     const { classes } = this.props;
-    const Item = ({ entity: { name, char } }) => <div style={{font: '20px'}}>{`${char}`}</div>;
+    const Item = ({ entity: { name, char } }) => <div style={{font: '20px', color: 'purple'}}>{`${char}`}</div>;
 
     return (
       <div className="container">
