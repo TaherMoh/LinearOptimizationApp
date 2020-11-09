@@ -6,12 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Solver {
 
 	public static void main(String[] args) throws IOException {
 		InputParser inputParser = new InputParser();
-		ArrayList<Object> parsedInput = inputParser.parseInput();
+		ArrayList<Object> parsedInput = inputParser.parseInput("");
 		
 		@SuppressWarnings("unchecked")
 		ArrayList<ConstrainedVariable> listOfVar = (ArrayList<ConstrainedVariable>) parsedInput.get(0);
@@ -33,9 +34,10 @@ public class Solver {
 	    writer.close();
 	}
 	
-	public static void generateSolver() throws IOException {
+	public static void generateSolver(String formulaWeb) throws IOException {
 		InputParser inputParser = new InputParser();
-		ArrayList<Object> parsedInput = inputParser.parseInput();
+
+		ArrayList<Object> parsedInput = inputParser.parseInput(formulaWeb);
 		
 		@SuppressWarnings("unchecked")
 		ArrayList<ConstrainedVariable> listOfVar = (ArrayList<ConstrainedVariable>) parsedInput.get(0);

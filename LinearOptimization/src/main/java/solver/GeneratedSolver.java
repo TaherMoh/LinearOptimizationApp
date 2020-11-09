@@ -25,8 +25,8 @@ public class GeneratedSolver {
 					     && x1 >=  0
 					     && x2 >=  0
 					     && x3 >=  0) {
-						if(x1 + 2*x2 + 3*x3 > z){
-							z = x1 + 2*x2 + 3*x3 ;
+						if(x1 + x2 + x3 > z){
+							z = x1 + x2 + x3 ;
 							X1 = x1;
 							X2 = x2;
 							X3 = x3;
