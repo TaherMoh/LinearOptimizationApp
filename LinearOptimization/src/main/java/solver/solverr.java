@@ -2,9 +2,9 @@ package solver;
 
 import java.util.HashMap;
 
-public class GeneratedSolver {
+public class solverr {
 
-	public static HashMap<String, String> solve() {
+	public static void main(String[] args) {
 		HashMap<String, String> results = new HashMap<String, String>();
 		double X1 = 0;
 		double X2 = 0;
@@ -12,10 +12,10 @@ public class GeneratedSolver {
 		double X4 = 0;
 		double z = 0;
 
-		for(double x1=0.1; x1<=0.15; x1+=0.1) {
-			for(double x2=0.15; x2<=0.35; x2+=0.1) {
-				for(double x3=0.15; x3<=0.25; x3+=0.1) {
-					for(double x4=0.4; x4<=0.6; x4+=0.1) {
+		for(double x1=0.1; x1<=0.15; x1+=0.001) {
+			for(double x2=0.15; x2<=0.35; x2+=0.001) {
+				for(double x3=0.15; x3<=0.25; x3+=0.001) {
+					for(double x4=0.4; x4<=0.6; x4+=0.001) {
 						x1= Double.parseDouble(String.format("%.2f", x1));
 						x2= Double.parseDouble(String.format("%.2f", x2));
 						x3= Double.parseDouble(String.format("%.2f", x3));
@@ -46,6 +46,10 @@ public class GeneratedSolver {
 		results.put("X2", String.format("%.2f", X2));
 		results.put("X3", String.format("%.2f", X3));
 		results.put("X4", String.format("%.2f", X4));
-		return results;
+		
+
+		System.out.println(results.values());
+
 	}
+
 }

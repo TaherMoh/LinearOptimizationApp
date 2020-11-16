@@ -12,7 +12,7 @@ public class Solver {
 
 	public static void main(String[] args) throws IOException {
 		InputParser inputParser = new InputParser();
-		ArrayList<Object> parsedInput = inputParser.parseInput("");
+		ArrayList<Object> parsedInput = inputParser.parseInput();
 		
 		@SuppressWarnings("unchecked")
 		ArrayList<ConstrainedVariable> listOfVar = (ArrayList<ConstrainedVariable>) parsedInput.get(0);
@@ -37,7 +37,7 @@ public class Solver {
 	public static void generateSolver(String formulaWeb) throws IOException {
 		InputParser inputParser = new InputParser();
 
-		ArrayList<Object> parsedInput = inputParser.parseInput(formulaWeb);
+		ArrayList<Object> parsedInput = inputParser.parseInput();
 		
 		@SuppressWarnings("unchecked")
 		ArrayList<ConstrainedVariable> listOfVar = (ArrayList<ConstrainedVariable>) parsedInput.get(0);

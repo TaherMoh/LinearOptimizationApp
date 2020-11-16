@@ -17,9 +17,8 @@ public class InputParser {
 		constraints = new ArrayList<String>();
 	}
 	
-	public ArrayList<Object> parseInput(String formulaLine) throws FileNotFoundException{
+	public ArrayList<Object> parseInput() throws FileNotFoundException{
 		ArrayList<Object> returnVal = new ArrayList<Object>();
-		formula = formulaLine.substring(9).trim();
 		
 		Scanner scanner = new Scanner(new File("src\\main\\java\\input.txt"));
 		while (scanner.hasNextLine()) {
@@ -39,6 +38,9 @@ public class InputParser {
 				   constrainedVariables.get(x).setWeight(Double.parseDouble(weights[x]));
 			   }
 		   }
+		   
+		   if(line.contains("maximize"))
+			   formula = line.substring(9).trim();
 		   
 		   if(line.contains("step"))
 			   step = Double.parseDouble(line.substring(5).trim());

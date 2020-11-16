@@ -31,12 +31,39 @@ class SubmitInput extends Component {
     this.state = {
       textAreaValue: "",
       values: [],
+      csv: "",
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
     this.setState({ textAreaValue: event.target.value });
+  }
+
+  handleTextChange = (event) => {
+    this.setState({
+      ...this.state,
+      csv: event.target.files[0]
+    })
+  }
+
+  handleSendFile() {
+    let formData = new FormData();
+    formData.append('file', this.state.csv);
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {  },
+      body: this.state.csv,
+    };
+
+    console.log(this.state.csv);
+
+    fetch(`http://localhost:8080/test_File`, requestOptions)
+      .then(resp => resp.json())
+      .then(result => {
+        alert(result.message)
+      })
   }
 
   async handleSubmit() {
@@ -162,6 +189,25 @@ class SubmitInput extends Component {
 
             <button onClick={() => this.handleSubmit()}>Solve</button>
           </div>
+
+          <form action="..." method="POST" enctype="multipart/form-data" action="/">
+
+            <input
+              type="file"
+              ref={(input) => { this.filesInput = input }}
+              name="file"
+              icon='file text outline'
+              iconPosition='left'
+              label='Upload CSV'
+              labelPosition='right'
+              placeholder='UploadCSV...'
+              onChange={this.handleTextChange}
+            />
+          </form>
+
+          <button onClick={() => this.handleSendFile()}>
+            Send
+          </button>
       </div>
     );
   }
