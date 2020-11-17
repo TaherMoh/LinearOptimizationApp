@@ -23,7 +23,7 @@ public class OptimizeFile {
 //        }
 //	}
 
-	public static void optimizeStudentGrade(ArrayList<String> components, int totalNumComponents, int colStart, int colEnd) throws IOException {
+	public static void optimizeStudentGrade(ArrayList<String> components, int totalNumComponents, int colStart, int colEnd, ArrayList<String> sameComponentsBefore, ArrayList<String> sameComponentsAfter) throws IOException {
 		// TODO Auto-generated method stub
 		ProcessBuilder builder = new ProcessBuilder(
 				"cmd.exe", "/c", "C:/Users/Taher/GLPK/glpk-4.65/w32/glpsol --math C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/script.ampl");
@@ -45,15 +45,23 @@ public class OptimizeFile {
             // Assignment weights and stuff
             for(String s: components) {
             	if(line.contains(s + ".val")) {
+            		/*
+            		 * Add old values that are not going to change (left hand)
+            		 */
             		if(s.equals(components.get(0))) {
-            			for(int n=1; n<colStart; n++) {
-            				sb.append(",");
+            			for(int n=0; n<colStart-1; n++) {
+            				sb.append(sameComponentsBefore.get(n) + ",");
             			}
             		}
+            		
             		sb.append(line.substring(line.indexOf("=")+1).trim() + ",");
+            		
+            		/*
+            		 * Add old values that are not going to change (right hand)
+            		 */
             		if(s.equals(components.get(components.size()-1))) {
-            			for(int z=0; z<totalNumComponents-colStart-components.size(); z++) {
-            				sb.append(",");
+            			for(int z=0; z<sameComponentsAfter.size(); z++) {
+            				sb.append(sameComponentsAfter.get(z) + ",");
             			}
             		}
             	}

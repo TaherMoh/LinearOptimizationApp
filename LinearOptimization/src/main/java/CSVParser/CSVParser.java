@@ -61,7 +61,7 @@ public class CSVParser {
          * Create empty output file
          */
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("synthesized_grades_output.csv"));
-        outputWriter.write(componentTitles);
+        outputWriter.write(componentTitles + "\n");
         outputWriter.close();
         
         /*
@@ -79,6 +79,7 @@ public class CSVParser {
         	String[] lineSplit = contentsSplit[x].split(",");
         	ArrayList<String> lineList = new ArrayList<String>();
         	ArrayList<String> sameComponentsBefore = new ArrayList<String>();
+        	ArrayList<String> sameComponentsAfter = new ArrayList<String>();
         	
         	int varIndex = 0;
         	boolean flag = true;
@@ -89,6 +90,9 @@ public class CSVParser {
         	for(int b=0; b<orderStart-1; b++) {
             	sameComponentsBefore.add(lineSplit[b]);
             }
+        	for(int b=(orderStart-1)+components.size(); b<lineSplit.length; b++) {
+        		sameComponentsAfter.add(lineSplit[b]);
+        	}
         	
         	/*
              * Create empty .ampl file
@@ -168,7 +172,8 @@ public class CSVParser {
 
         	writer.close();
         	
-        	OptimizeFile.optimizeStudentGrade(components, componentSplit.length, orderStart, orderEnd);
+        	OptimizeFile.optimizeStudentGrade(components, componentSplit.length, orderStart, orderEnd
+        			, sameComponentsBefore, sameComponentsAfter);
         	
         	System.out.println("\n\n");
         	// End of row parsing / processing
