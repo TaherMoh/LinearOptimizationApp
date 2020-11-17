@@ -48,6 +48,7 @@ public class CSVParser {
         String componentTitles = contentsSplit[0];
         String[] componentSplit = componentTitles.split(",");
         ArrayList<String> components = new ArrayList<String>();
+        ArrayList<String> componentsOG = new ArrayList<String>();
         
         /*
          * Create empty .ampl file
@@ -61,14 +62,19 @@ public class CSVParser {
          * Create empty output file
          */
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("synthesized_grades_output.csv"));
-        outputWriter.write(componentTitles + "\n");
+        outputWriter.write(componentTitles + ",total\n");
         outputWriter.close();
         
         /*
          * Only write variable names that are specified by the user input start and finish
          */
         for(int x=orderStart-1; x<=orderEnd; x++) {
-            components.add(componentSplit[x].replaceAll("\\s+",""));
+        	componentsOG.add(componentSplit[x]);
+        	String comp = componentSplit[x].replaceAll("\\s+","");
+        	comp = comp.replace(":", "_");
+        	comp = comp.replace("(", "_");
+        	comp = comp.replace(")", "_");
+            components.add(comp);
         }
 
         /*
@@ -76,7 +82,7 @@ public class CSVParser {
          * create a optimization solution
          */
         for(int x=1; x<contentsSplit.length; x++) {            
-        	String[] lineSplit = contentsSplit[x].split(",");
+        	String[] lineSplit = contentsSplit[x].split(",", -1);
         	ArrayList<String> lineList = new ArrayList<String>();
         	ArrayList<String> sameComponentsBefore = new ArrayList<String>();
         	ArrayList<String> sameComponentsAfter = new ArrayList<String>();
@@ -90,10 +96,11 @@ public class CSVParser {
         	for(int b=0; b<orderStart-1; b++) {
             	sameComponentsBefore.add(lineSplit[b]);
             }
-        	for(int b=(orderStart-1)+components.size(); b<lineSplit.length; b++) {
-        		sameComponentsAfter.add(lineSplit[b]);
-        	}
         	
+        	for(int b=(orderStart-1)+components.size(); b<lineSplit.length; b++) {
+    			sameComponentsAfter.add(lineSplit[b]);
+        	}
+        	        	
         	/*
              * Create empty .ampl file
              */
@@ -119,7 +126,10 @@ public class CSVParser {
     				sbObjective.append("maximize z: ");
     				sbConstraint.append("subject to c11: ");
     			}
-    				
+    			
+    			if(lineSplit[y].isEmpty() || lineSplit[y].contains("-")) {
+    				lineSplit[y] = "0";
+    			}
     			sbObjective.append(" " + components.get(varIndex) + "*" + lineSplit[y] + " +");
     			sbConstraint.append(" " + components.get(varIndex) + " +");
     			
@@ -136,9 +146,6 @@ public class CSVParser {
         	
         	writer.write("\n" + sbObjective.toString() + "\n");        	
         	writer.write("\n" + sbConstraint.toString() + "\n");  
-        	
-//        	System.out.println("\n" + sbObjective.toString());
-//        	System.out.println("\n" + sbConstraint.toString());
         	
         	// Handling remaining constraints
         	StringBuilder sb = new StringBuilder();
@@ -175,7 +182,7 @@ public class CSVParser {
         	OptimizeFile.optimizeStudentGrade(components, componentSplit.length, orderStart, orderEnd
         			, sameComponentsBefore, sameComponentsAfter);
         	
-        	System.out.println("\n\n");
+//        	System.out.println("\n\n");
         	// End of row parsing / processing
         }
 	}
@@ -196,4 +203,6 @@ public class CSVParser {
  
         return contentBuilder.toString();
     }
+    
+    
 }
