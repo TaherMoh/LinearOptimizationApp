@@ -16,11 +16,13 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -55,10 +57,10 @@ public class APIHelper {
 	
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/test_FileUpload")
-    public String ingestDataFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public ResponseEntity<Object> ingestDataFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
      if (file.isEmpty()) {
                 redirectAttributes.addFlashAttribute("message", "No File is Present");
-                return "redirect:uploadStatus";
+                return null;
             }
              try {
 
@@ -66,14 +68,13 @@ public class APIHelper {
                 byte[] bytes = file.getBytes();
                 Path path = Paths.get(file.getOriginalFilename());
                 Files.write(path, bytes);
-
-                return "File upload successful'" + file.getOriginalFilename();
-
+                System.out.println("UPLOADED :!!:!:!");
+                return ResponseEntity.ok().build();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return "redirect:/uploadStatus";
+            return null;
     }
 	
     @GetMapping("/uploadStatus")

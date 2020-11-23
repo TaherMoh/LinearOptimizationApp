@@ -52,18 +52,35 @@ class SubmitInput extends Component {
     formData.append('file', this.state.csv);
 
     const requestOptions = {
+      mode: 'no-cors',
       method: 'POST',
-      headers: {  },
-      body: this.state.csv,
+      body: formData,
     };
 
     console.log(this.state.csv);
 
-    fetch(`http://localhost:8080/test_File`, requestOptions)
-      .then(resp => resp.json())
-      .then(result => {
-        alert(result.message)
-      })
+    fetch('http://localhost:8080/test_FileUpload', requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log('Success:', result);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+    // fetch("http://localhost:8080/test_FileUpload", requestOptions).then(function (res) {
+    //   if (res.ok) {
+    //     alert("HELLO TAHER");
+    //     return res.json();
+    //   } else {
+    //     return Promise.reject(res);
+    //   }
+    // }).then(function (response) {
+    //   console.log("HELLO TAHER");
+    // }).catch(function (error) {
+    //   //Handle error
+    //   console.log(error);
+    // });
   }
 
   async handleSubmit() {
@@ -190,16 +207,17 @@ class SubmitInput extends Component {
             <button onClick={() => this.handleSubmit()}>Solve</button>
           </div>
 
-          <form action="..." method="POST" enctype="multipart/form-data" action="/">
+          <form action="..." method="post" encType="multipart/form-data">
 
             <input
               type="file"
+              name="file"
               ref={(input) => { this.filesInput = input }}
               name="file"
               icon='file text outline'
-              iconPosition='left'
+              iconposition='left'
               label='Upload CSV'
-              labelPosition='right'
+              labelposition='right'
               placeholder='UploadCSV...'
               onChange={this.handleTextChange}
             />
