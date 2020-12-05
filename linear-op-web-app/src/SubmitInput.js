@@ -3,6 +3,9 @@ import {withStyles} from "@material-ui/core/styles";
 import { MDBInput } from "mdbreact";
 import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import './App.css'
+import { Checkmark } from 'react-checkmark'
+import { Typography } from "@material-ui/core";
+import { CsvToHtmlTable } from 'react-csv-to-table';
 
 const styles = theme => ({
   submitBox: {
@@ -15,13 +18,44 @@ const styles = theme => ({
     left: 0,
   },
 
+  completedTasksContainer: {
+    float: 'right',
+    width: '70%',
+    padding: '5%',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+  },
+
+  completedTasks: {
+    color: 'white',
+    backgroundColor: 'green',
+    float: 'left',
+    width: '90%',
+  },
+
   popup:{
     position: 'relative',
   },
 
   rta:{
     position: 'relative',
-  }
+  },
+
+  floatContainer: {
+    maxHeight: '100%',
+  },
+
+  floatChild: {
+      width: '49%',
+      float: 'left',
+      padding: '15px',
+  },
+
+  floatChildLeft: {
+      width: '49%',
+      float: 'left',
+      alignContent: 'center',
+  },
 });
 
 class SubmitInput extends Component {
@@ -31,6 +65,10 @@ class SubmitInput extends Component {
     this.state = {
       textAreaValue: "",
       values: [],
+      csv: "",
+      uploaded: false,
+      generated: false,
+      solved: false,
       csv: "",
     };
     this.handleChange = this.handleChange.bind(this);
@@ -52,7 +90,6 @@ class SubmitInput extends Component {
     formData.append('file', this.state.csv);
 
     const requestOptions = {
-      mode: 'no-cors',
       method: 'POST',
       body: formData,
     };
@@ -60,9 +97,58 @@ class SubmitInput extends Component {
     console.log(this.state.csv);
 
     fetch('http://localhost:8080/test_FileUpload', requestOptions)
-    .then((response) => response.json())
+    .then(function (response) {
+      if (response.ok) {
+          return response.json();
+      } else {
+          return Promise.reject(response);
+      }
+    })
     .then((result) => {
       console.log('Success:', result);
+      this.setState({
+        ...this.state,
+        uploaded: true,
+      })
+    })
+    .then(function () {
+      // Fetch another API
+      return fetch('http://localhost:8080/run_Optimizer', requestOptions);
+    })
+    .then(function (response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return Promise.reject(response);
+        }
+    })
+    .then(result => {
+        console.log("Created output file? " + result);
+
+        this.setState({
+            ...this.state,
+            generated: true,
+        })
+    })
+    .then(function () {
+      // Fetch another API
+      return fetch('http://localhost:8080/get_CSV');
+    })
+    .then(function (response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return Promise.reject(response);
+        }
+    })
+    .then(result => {
+        console.log("Received output data from server " + result.content);
+
+        this.setState({
+            ...this.state,
+            solved: true,
+            csv: result.content,
+        })
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -137,9 +223,9 @@ class SubmitInput extends Component {
     const Item = ({ entity: { name, char } }) => <div style={{font: '20px', color: 'purple'}}>{`${char}`}</div>;
 
     return (
-      <div className="container">
-          <label className={classes.label}>Enter value : </label>
-          <div>
+      <div className={classes.floatContainer}>
+        <div className={classes.floatChildLeft}>
+                    {/* <label className={classes.label}>Enter value : </label> */}
             {/* <MDBInput
               type="textarea"
               label="Icon Prefix"
@@ -150,8 +236,7 @@ class SubmitInput extends Component {
               className={classes.submitBox}
             /> */}
 
-            <div className="container">
-              <ReactTextareaAutocomplete
+              {/* <ReactTextareaAutocomplete
                 className={classes.submitBox}
                 onChange={this.handleChange}
                 loadingComponent={() => <span>Loading</span>}
@@ -201,13 +286,12 @@ class SubmitInput extends Component {
                     output: (item) => item.name
                   },
                 }}
-              />
-            </div>
+              /> */}
+            
 
-            <button onClick={() => this.handleSubmit()}>Solve</button>
-          </div>
+            {/* <button onClick={() => this.handleSubmit()}>Solve</button> */}
 
-          <form action="..." method="post" encType="multipart/form-data">
+            <form action="..." method="post" encType="multipart/form-data">
 
             <input
               type="file"
@@ -221,11 +305,52 @@ class SubmitInput extends Component {
               placeholder='UploadCSV...'
               onChange={this.handleTextChange}
             />
-          </form>
+            </form>
 
-          <button onClick={() => this.handleSendFile()}>
-            Send
-          </button>
+            <button onClick={() => this.handleSendFile()}>
+              Send
+            </button>
+          </div>
+
+        <div className={classes.floatChild} hidden={this.state.initialized === 'false'}>
+            <div>
+                {
+                    this.state.uploaded === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Uploaded </Typography>
+                            <Checkmark size='medium'/>
+                        </div>
+                        : null
+                }
+
+                {
+                    this.state.generated === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Output file generated </Typography>
+                            <Checkmark size='medium'/>
+                        </div>
+                        : null
+                }
+
+                {
+                    this.state.solved === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Received output </Typography>
+                            <Checkmark size='medium'/>
+                        </div>
+                        : null
+                }
+            </div>
+        </div>
+              {
+                    this.state.solved === true ?
+                        <CsvToHtmlTable
+                          data={this.state.csv}
+                          tableClassName="table striped hover"
+                          csvDelimiter=","
+                        />
+                        : null
+              }
       </div>
     );
   }

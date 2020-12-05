@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class OptimizeFile {
 
 	public static void optimizeStudentGrade(ArrayList<String> components, int totalNumComponents, int colStart, int colEnd, ArrayList<String> sameComponentsBefore, ArrayList<String> sameComponentsAfter) throws IOException {
-		// TODO Auto-generated method stub
 		ProcessBuilder builder = new ProcessBuilder(
 				"cmd.exe", "/c", "C:/Users/Taher/GLPK/glpk-4.65/w32/glpsol --math C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/script.ampl");
 

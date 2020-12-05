@@ -32,6 +32,10 @@ ul.ba {
   list-style-type: none;
 }
 
+tr:nth-child(even) {
+  background-color: #d8d8d8ab;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
