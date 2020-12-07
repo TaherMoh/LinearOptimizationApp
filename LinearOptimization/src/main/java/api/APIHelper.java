@@ -36,7 +36,13 @@ import CSVParser.Pair;
 
 @RestController
 public class APIHelper {
-	
+	/*
+	 * TODO:
+	 * 	- Change these values to be passed in from front-end UI.
+	 */
+	static int numColumns;
+	static int orderStart;
+	static int orderEnd;
 //	@CrossOrigin(origins = "http://localhost:3000")
 //	@GetMapping("/test_API")
 //	public static HashMap<String, String> testAPI() throws IOException, InterruptedException {
@@ -92,6 +98,16 @@ public class APIHelper {
             return false;
     }
 	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@PostMapping("/initialize_Params")
+    public boolean initializeData(@RequestBody Params pr) {
+		numColumns = pr.getNumCol();
+		orderStart = pr.getStartCol();
+		orderEnd = pr.getEndCol();
+		
+		return true;
+    }
+	
     @GetMapping("/uploadStatus")
 	public String uploadStatus() {
 	    return "uploadStatus";
@@ -101,13 +117,15 @@ public class APIHelper {
 	@PostMapping("/run_Optimizer")
 	public static boolean runOptimizer(@RequestParam("file") MultipartFile filee, RedirectAttributes redirectAttributes) throws IOException {
 		
-		/*
-		 * TODO:
-		 * 	- Change these values to be passed in from front-end UI.
-		 */
-		int numColumns = 7;
-		int orderStart = 6;
-		int orderEnd = 11;
+//		/*
+//		 * TODO:
+//		 * 	- Change these values to be passed in from front-end UI.
+//		 */
+//		int numColumns = 7;
+//		int orderStart = 6;
+//		int orderEnd = 11;
+		
+		System.out.println(numColumns + " " + orderStart + " " + orderEnd);
 		List<Pair<Double,Double>> weights = new ArrayList<Pair<Double,Double>>();
 		weights.add(new Pair<Double, Double>(0.03, 0.10));
 		weights.add(new Pair<Double, Double>(0.03, 0.10));

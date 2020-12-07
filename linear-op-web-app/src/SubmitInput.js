@@ -6,6 +6,12 @@ import './App.css'
 import { Checkmark } from 'react-checkmark'
 import { Typography } from "@material-ui/core";
 import { CsvToHtmlTable } from 'react-csv-to-table';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
   submitBox: {
@@ -16,6 +22,11 @@ const styles = theme => ({
   
   label: {
     left: 0,
+  },
+
+  formControl: {
+    minWidth: '33%',
+    paddingRight: '10%',
   },
 
   completedTasksContainer: {
@@ -66,10 +77,14 @@ class SubmitInput extends Component {
       textAreaValue: "",
       values: [],
       csv: "",
+      initialized: false,
       uploaded: false,
       generated: false,
       solved: false,
       csv: "",
+      numCol: 0,
+      startCol: 0,
+      endCol: 0,
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -96,7 +111,34 @@ class SubmitInput extends Component {
 
     console.log(this.state.csv);
 
-    fetch('http://localhost:8080/test_FileUpload', requestOptions)
+    // fetch('http://localhost:8080/test_FileUpload', requestOptions)
+    fetch('http://localhost:8080/initialize_Params', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        numCol: this.state.numCol,
+        startCol: this.state.startCol,
+        endCol: this.state.endCol,
+      }),
+    })
+    .then(function (response) {
+      if (response.ok) {
+          return response.json();
+      } else {
+          return Promise.reject(response);
+      }
+    })
+    .then((result) => {
+      console.log('Initialized successfully:', result);
+      this.setState({
+        ...this.state,
+        initialized: true,
+      })
+    })
+    .then(function () {
+      // Fetch another API
+      return fetch('http://localhost:8080/test_FileUpload', requestOptions);
+    })
     .then(function (response) {
       if (response.ok) {
           return response.json();
@@ -169,6 +211,26 @@ class SubmitInput extends Component {
     // });
   }
 
+  handleNumCol (event) {
+    this.setState({
+      ...this.state,
+      numCol: event.target.value,
+    })
+  };
+
+  handleStartCol (event) {
+    this.setState({
+      ...this.state,
+      startCol: event.target.value,
+    })
+  };
+  
+  handleEndCol (event) {
+    this.setState({
+      ...this.state,
+      endCol: event.target.value,
+    })
+  };
   async handleSubmit() {
     
     // let arr = this.state.textAreaValue.split("\n");
@@ -220,10 +282,15 @@ class SubmitInput extends Component {
 
   render() {
     const { classes } = this.props;
-    const Item = ({ entity: { name, char } }) => <div style={{font: '20px', color: 'purple'}}>{`${char}`}</div>;
+    // const Item = ({ entity: { name, char } }) => <div style={{font: '20px', color: 'purple'}}>{`${char}`}</div>;
+
+    const Items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
+    const MappingItems = Items.map((Item) => <MenuItem value={Item}>Item</MenuItem> );
 
     return (
       <div className={classes.floatContainer}>
+        
+
         <div className={classes.floatChildLeft}>
                     {/* <label className={classes.label}>Enter value : </label> */}
             {/* <MDBInput
@@ -291,13 +358,70 @@ class SubmitInput extends Component {
 
             {/* <button onClick={() => this.handleSubmit()}>Solve</button> */}
 
+              <FormControl required className={classes.formControl}>
+                  <InputLabel id="total-num-col">Number of columns</InputLabel>
+                  <Select
+                    labelId="total-num-col"
+                    id="total-num-col-required"
+                    value={this.state.numCol}
+                    onChange={(event) => this.handleNumCol(event)}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+              </FormControl>
+
+              <FormControl required className={classes.formControl}>
+                  <InputLabel id="col-start-index">Starting index</InputLabel>
+                  <Select
+                    labelId="col-start-index"
+                    id="col-start-index-required"
+                    value={this.state.startCol}
+                    onChange={(event) => this.handleStartCol(event)}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+              </FormControl>
+
+              <FormControl required className={classes.formControl}>
+                  <InputLabel id="col-end-index">End index</InputLabel>
+                  <Select
+                    labelId="col-end-index"
+                    id="col-end-index-required"
+                    value={this.state.endCol}
+                    onChange={(event) => this.handleEndCol(event)}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+              </FormControl>
+
+              <TextField
+                id="filled-multiline-static"
+                label="Column Weights"
+                multiline
+                style={{width: '100%', paddingBottom: '5%'}}
+                rows={7}
+                defaultValue=""
+                variant="filled"
+              />
+
             <form action="..." method="post" encType="multipart/form-data">
 
             <input
               type="file"
               name="file"
               ref={(input) => { this.filesInput = input }}
-              name="file"
               icon='file text outline'
               iconposition='left'
               label='Upload CSV'
@@ -314,6 +438,15 @@ class SubmitInput extends Component {
 
         <div className={classes.floatChild} hidden={this.state.initialized === 'false'}>
             <div>
+                {
+                    this.state.initialized === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Initialized </Typography>
+                            <Checkmark size='medium'/>
+                        </div>
+                        : null
+                }
+
                 {
                     this.state.uploaded === true ?
                         <div className={classes.completedTasksContainer}>
