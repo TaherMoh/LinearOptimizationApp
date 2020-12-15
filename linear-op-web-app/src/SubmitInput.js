@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
-import x_mark from './images.png';
+import x_mark from './Images/x_mark2.png';
 
 const styles = theme => ({
   submitBox: {

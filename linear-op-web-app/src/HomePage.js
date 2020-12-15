@@ -17,11 +17,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Solver from './Solver'
 import { CsvToHtmlTable } from 'react-csv-to-table';
-import example from './example.png';
-import homeIcon from './home_icon.png';
-import algorithmIcon from './algorithmIcon.png';
-import solutionIcon from './solutionIcon.png';
-import helpIcon from './helpIcon.png';
+import example from './Images/example.png';
+import homeIcon from './Images/home_icon.png';
+import algorithmIcon from './Images/algorithmIcon.png';
+import solutionIcon from './Images/solutionIcon.png';
+import helpIcon from './Images/helpIcon.png';
 
 const drawerWidth = 240;
 
@@ -343,7 +343,7 @@ export default function PersistentDrawerLeft() {
         {
           component === 2 ?
             csv === '' ? 
-              <h1 style={{marginTop: '5%'}}>Not solved yet!</h1>
+              <h1 style={{marginTop: '5%'}}>No solution yet!</h1>
               :
               <div style={{marginTop: '5%'}}>
                 <CsvToHtmlTable
