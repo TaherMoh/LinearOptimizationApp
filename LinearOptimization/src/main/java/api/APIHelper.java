@@ -43,17 +43,9 @@ public class APIHelper {
 	static int numColumns;
 	static int orderStart;
 	static int orderEnd;
-//	@CrossOrigin(origins = "http://localhost:3000")
-//	@GetMapping("/test_API")
-//	public static HashMap<String, String> testAPI() throws IOException, InterruptedException {
-//		Solver.generateSolver();
-//		
-//		TimeUnit.SECONDS.sleep(3);
-//		
-//		Application.restart();
-//		
-//		return GeneratedSolver.solve();
-//	}
+	static String weightsString;
+	static List<Pair<Double,Double>> weights; 
+	static String uploadFileName;
 
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/test_Multi")
@@ -87,7 +79,7 @@ public class APIHelper {
 
                 // Get the file and save it somewhere
                 byte[] bytes = file.getBytes();
-                Path path = Paths.get(file.getOriginalFilename());
+                Path path = Paths.get("synthesized_grades.csv");
                 Files.write(path, bytes);
                 System.out.println("UPLOADED :!!:!:!");
                 return true;
@@ -104,18 +96,22 @@ public class APIHelper {
 		numColumns = pr.getNumCol();
 		orderStart = pr.getStartCol();
 		orderEnd = pr.getEndCol();
+		weightsString = pr.getWeights();
+		weights = new ArrayList<Pair<Double,Double>>();
+		uploadFileName = pr.getUploadFileName();
+		
+		for(String line: weightsString.split("\n")) {
+			String[] weightsSplit = line.split(",");
+			
+			weights.add(new Pair<Double, Double>(Double.parseDouble(weightsSplit[0]), Double.parseDouble(weightsSplit[1])));
+		}
 		
 		return true;
     }
-	
-    @GetMapping("/uploadStatus")
-	public String uploadStatus() {
-	    return "uploadStatus";
-	}
-	
+
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/run_Optimizer")
-	public static boolean runOptimizer(@RequestParam("file") MultipartFile filee, RedirectAttributes redirectAttributes) throws IOException {
+	public static boolean runOptimizer() throws IOException {
 		
 //		/*
 //		 * TODO:
@@ -126,15 +122,15 @@ public class APIHelper {
 //		int orderEnd = 11;
 		
 		System.out.println(numColumns + " " + orderStart + " " + orderEnd);
-		List<Pair<Double,Double>> weights = new ArrayList<Pair<Double,Double>>();
-		weights.add(new Pair<Double, Double>(0.03, 0.10));
-		weights.add(new Pair<Double, Double>(0.03, 0.10));
-		weights.add(new Pair<Double, Double>(0.1, 0.25));
-		weights.add(new Pair<Double, Double>(0.03, 0.10));
-		weights.add(new Pair<Double, Double>(0.1, 0.40));
-		weights.add(new Pair<Double, Double>(0.03, 0.1));
-		weights.add(new Pair<Double, Double>(0.3, 0.70));
 		
+//		weights.add(new Pair<Double, Double>(0.03, 0.10));
+//		weights.add(new Pair<Double, Double>(0.03, 0.10));
+//		weights.add(new Pair<Double, Double>(0.1, 0.25));
+//		weights.add(new Pair<Double, Double>(0.03, 0.10));
+//		weights.add(new Pair<Double, Double>(0.1, 0.40));
+//		weights.add(new Pair<Double, Double>(0.03, 0.1));
+//		weights.add(new Pair<Double, Double>(0.3, 0.70));
+//		
 		/*
 		 * This file will be uploaded from the UI first, when its uploaded it will be read here. 
 		 */
@@ -304,47 +300,6 @@ public class APIHelper {
  
         return contentBuilder.toString();
     }
-    
-	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping("/test_GLPK")
-	public static HashMap<String, String> testGLPK(@RequestBody String contents) throws IOException, InterruptedException {
-		HashMap<String, String> retVal = new HashMap<String, String>();
-		
-		File file = new File("src\\main\\java\\GLPK\\ex1.ampl");
-		if(!file.exists()) {
-			file.createNewFile();
-		}
-		
-		BufferedWriter writer = new BufferedWriter(new FileWriter("src\\main\\java\\GLPK\\ex1.ampl"));
-	    writer.write(contents);	    
-	    writer.close();
-	    
-		Thread.sleep(1000);
-		
-		String[] lines = contents.split(System.getProperty("line.separator"));
-		
-//		ProcessBuilder builder = new ProcessBuilder(
-//	            "cmd.exe", "/c", "C:/Users/Taher/GLPK/glpk-4.65/w32/glpsol --math C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/GLPK/ex1.ampl > C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/OutputFiles/output.txt");
-		ProcessBuilder builder = new ProcessBuilder(
-				"cmd.exe", "/c", "C:/Users/Taher/GLPK/glpk-4.65/w32/glpsol --math C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/GLPK/ex1.ampl");
-
-		builder.redirectErrorStream(true);
-        Process p = builder.start();
-        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line;
-        while (true) {
-            line = r.readLine();
-            if (line == null) { break; }
-            System.out.println(line);
-        }
-
-		Thread.sleep(1000);
-		
-		String ret = readFileIntoString("C:/Users/Taher/Desktop/LinearOptimizationApp/LinearOptimization/src/main/java/OutputFiles/output.txt");
-		retVal.put("log", ret);
-
-		return retVal;
-	}
 	
 	/**
      * This method reads the contents of a file and returns it into as a single String

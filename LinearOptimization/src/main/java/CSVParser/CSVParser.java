@@ -51,7 +51,7 @@ public class CSVParser {
         ArrayList<String> componentsOG = new ArrayList<String>();
         
         /*
-         * Create empty .ampl file
+         * Create output file 
          */
         File csvOutput = new File("synthesized_grades_output.csv");
         if(!csvOutput.exists()) {

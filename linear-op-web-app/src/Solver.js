@@ -23,11 +23,13 @@ class Solver extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-
         return (
             <div >
-                <SubmitInput/>
+                <SubmitInput 
+                csvHandler={this.props.csvHandler} 
+                numColHanlder={this.props.numColHanlder}
+                numCol={this.props.numCol}
+                />
             </div>
         )
     }

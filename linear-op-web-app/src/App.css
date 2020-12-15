@@ -13,6 +13,28 @@
   }
 }
 
+h1 {
+  font-size: 3.0em;
+  float: left;
+  font-family: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif';
+  font-weight: 500;
+  line-height: 1.1;
+  width: 100%;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.2em;
+}
+
+h2 {
+  font-size: 1.5em;
+  float: left;
+  font-family: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif';
+  font-weight: 500;
+  line-height: 1.1;
+  width: 100%;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.2em;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

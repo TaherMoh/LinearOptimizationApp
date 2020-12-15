@@ -18,6 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Solver from './Solver'
+import { CsvToHtmlTable } from 'react-csv-to-table';
 
 const drawerWidth = 240;
 
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    backgroundColor: '#759EB8',
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -81,8 +83,31 @@ const useStyles = makeStyles((theme) => ({
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [component, setComponent] = React.useState(0)
+  const [csv, setCsv] = React.useState('')
+  const [page, setPage] = React.useState({
+                            textAreaValue: "",
+                            values: [],
+                            initialized: false,
+                            uploaded: false,
+                            generated: false,
+                            solved: false,
+                            csv: "",
+                            numCol: 0,
+                            startCol: 0,
+                            endCol: 0,
+                            weights: "",
+                            initializeError: false,
+                            uploadedError: false,
+                            generatedError: false,
+                            solvedError: false,
+                          })
+    const [textAreaValue, setTextAreaValue] = React.useState('')
+    const [values, setValues] = React.useState([])
+    const [initialized, setInitialized] = React.useState(false)
+    const [numCol, setNumCol] = React.useState(0)
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -91,6 +116,18 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleCsv = (contents) => {
+    setCsv(contents);
+  }
+  
+  const handlePage = (state) => {
+      setPage(state);
+  }
+
+  const handleNumCol = (num) => {
+    setNumCol(num);
+  }
 
   return (
     <div className={classes.root}>
@@ -112,7 +149,7 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            Menu
           </Typography>
         </Toolbar>
       </AppBar>
@@ -132,8 +169,12 @@ export default function PersistentDrawerLeft() {
         </div>
         <Divider />
         <List>
-          {['Home', 'Solver', 'Contact Me'].map((text, index) => (
+          {['Home', 'Solver', 'Solution'].map((text, index) => (
             <ListItem button key={text} onClick={() => setComponent(index)}>
+              {/* 
+                // TODO: 
+                // CHANGE THESE ICONS
+              */}
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
@@ -145,18 +186,52 @@ export default function PersistentDrawerLeft() {
           [classes.contentShift]: open,
         })}
       >
-        <div className={classes.drawerHeader} />
+        
 
         {
             component === 0 ? 
-            <Typography>Home Page</Typography>
+            <div style={{
+              fontSize: '1.5em',
+              fontFamily: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif',
+              fontWeight: '500',
+              lineHeight: '1.1',
+              padding: '20px',
+              width: '100%',
+              textAlign: 'left',
+              }}>
+              <h1>Student Grade Optimizer</h1>
+              <Typography>This is an online tool that uses a linear optimization solver to optimize a students final grades</Typography>
+              
+              <h2>Getting Started</h2>
+              <Typography>You can upload any .CSV file in the "Solver" tab to get started and pick your configuration.</Typography>
+            </div>
             : null
         }
         
         {
             component === 1 ? 
-            <Solver></Solver>
+            <Solver 
+            csvHandler={(contents) => handleCsv(contents)} 
+            numColHanlder={(input) => handleNumCol(input)} 
+            numCol={numCol}
+            />
             : null
+        }
+
+        {
+          component === 2 ?
+            csv === '' ? 
+              <h1 style={{marginTop: '5%'}}>Not solved yet!</h1>
+              :
+              <div style={{marginTop: '5%'}}>
+                <CsvToHtmlTable
+                  data={csv}
+                  tableClassName="table striped hover"
+                  csvDelimiter=","
+                />
+              </div>
+          :
+          null
         }
 
       </main>

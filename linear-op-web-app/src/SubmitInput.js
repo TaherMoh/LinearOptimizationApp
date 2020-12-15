@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import {withStyles} from "@material-ui/core/styles";
-import { MDBInput } from "mdbreact";
-import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import './App.css'
 import { Checkmark } from 'react-checkmark'
 import { Typography } from "@material-ui/core";
@@ -12,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import x_mark from './images.png';
 
 const styles = theme => ({
   submitBox: {
@@ -31,15 +30,14 @@ const styles = theme => ({
 
   completedTasksContainer: {
     float: 'right',
-    width: '70%',
-    padding: '5%',
+    width: '90%',
     paddingTop: '10px',
     paddingBottom: '10px',
   },
 
   completedTasks: {
     color: 'white',
-    backgroundColor: 'green',
+    backgroundColor: '#7392B7',
     float: 'left',
     width: '90%',
   },
@@ -54,38 +52,67 @@ const styles = theme => ({
 
   floatContainer: {
     maxHeight: '100%',
+    marginTop: '5%',
   },
 
   floatChild: {
       width: '49%',
       float: 'left',
       padding: '15px',
+
   },
 
   floatChildLeft: {
-      width: '49%',
+      width: '48%',
       float: 'left',
       alignContent: 'center',
+      paddingRight: '20px',
+      borderRight: '2px solid #759EB8',
+    },
+
+  uploadBtn: {
+    border: '4px solid #7392B7',
+    borderRadius: '5px',
+    color: '#fff',
+    background: '#7392B7',
+    webkitTransition: 'none',
+    mozTransition: 'none',
+    transition: 'none',
+    maxWidth: '25%',
   },
+
+  sendBtn: {
+    border: '4px solid #7392B7',
+    color: '#fff',
+    background: '#7392B7',
+    width: '100%',
+    height: '5%',
+    borderRadius: '5px',
+  }
 });
 
 class SubmitInput extends Component {
   
-  constructor() {
+  constructor(props) {
     super();
-    this.state = {
-      textAreaValue: "",
-      values: [],
-      csv: "",
-      initialized: false,
-      uploaded: false,
-      generated: false,
-      solved: false,
-      csv: "",
-      numCol: 0,
-      startCol: 0,
-      endCol: 0,
-    };
+    // this.state = {
+    //   textAreaValue: "",
+    //   values: [],
+    //   initialized: false,
+    //   uploaded: false,
+    //   generated: false,
+    //   solved: false,
+    //   csv: "",
+    //   numCol: 0,
+    //   startCol: 0,
+    //   endCol: 0,
+    //   weights: "",
+    //   initializeError: false,
+    //   uploadedError: false,
+    //   generatedError: false,
+    //   solvedError: false,
+    // };
+    this.setState = props.statee;
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -100,6 +127,15 @@ class SubmitInput extends Component {
     })
   }
 
+  handleWeightChange = (event) => {
+    this.setState({
+      ...this.state,
+      weights: event.target.value
+    });
+
+    console.log(this.state.weights);
+  }
+
   handleSendFile() {
     let formData = new FormData();
     formData.append('file', this.state.csv);
@@ -109,9 +145,16 @@ class SubmitInput extends Component {
       body: formData,
     };
 
+    this.setState({
+      ...this.state,
+      initialized: false,
+      uploaded: false,
+      generated: false,
+      solved: false,
+    })
     console.log(this.state.csv);
+    console.log(this.state.csv.name);
 
-    // fetch('http://localhost:8080/test_FileUpload', requestOptions)
     fetch('http://localhost:8080/initialize_Params', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -119,6 +162,8 @@ class SubmitInput extends Component {
         numCol: this.state.numCol,
         startCol: this.state.startCol,
         endCol: this.state.endCol,
+        weights: this.state.weights,
+        uploadFileName: this.state.csv.name,
       }),
     })
     .then(function (response) {
@@ -193,29 +238,37 @@ class SubmitInput extends Component {
         })
     })
     .catch((error) => {
+      if(this.state.initialized === false) {
+        this.setState({
+          ...this.state,
+          initializeError: true,
+        });
+      } else if (this.state.uploaded === false) {
+        this.setState({
+          ...this.state,
+          uploadedError: true,
+        });
+      } else if (this.state.generated === false) {
+        this.setState({
+          ...this.state,
+            generatedError: true,
+        });
+      } else if (this.state.solved === false) {
+        this.setState({
+          ...this.state,
+          solvedError: true,
+        });
+      }
       console.error('Error:', error);
     });
-
-    // fetch("http://localhost:8080/test_FileUpload", requestOptions).then(function (res) {
-    //   if (res.ok) {
-    //     alert("HELLO TAHER");
-    //     return res.json();
-    //   } else {
-    //     return Promise.reject(res);
-    //   }
-    // }).then(function (response) {
-    //   console.log("HELLO TAHER");
-    // }).catch(function (error) {
-    //   //Handle error
-    //   console.log(error);
-    // });
   }
 
   handleNumCol (event) {
-    this.setState({
-      ...this.state,
-      numCol: event.target.value,
-    })
+    this.props.numColHanlder(event.target.value);
+    // this.setState({
+    //   ...this.state,
+    //   numCol: event.target.value,
+    // })
   };
 
   handleStartCol (event) {
@@ -232,34 +285,6 @@ class SubmitInput extends Component {
     })
   };
   async handleSubmit() {
-    
-    // let arr = this.state.textAreaValue.split("\n");
-
-    // for await(const text of arr){
-    //   if(text.includes("maximize")){
-    //     setTimeout(() => {
-    //       console.log(text);
-
-    //       // POST request using fetch with async/await
-    //       const requestOptions = {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: this.state.textAreaValue,
-    //       };
-
-    //       // Fetch another API// POST request using fetch with async/await
-    //       const requestOptions2 = {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: text.trim(),
-    //       };
-
-    //       this.handlePosts(requestOptions, requestOptions2);
-    //     }, 3000);
-          
-    //   };
-    // }
-
     // POST request using fetch with async/await
     const requestOptions = {
       method: 'POST',
@@ -282,156 +307,91 @@ class SubmitInput extends Component {
 
   render() {
     const { classes } = this.props;
-    // const Item = ({ entity: { name, char } }) => <div style={{font: '20px', color: 'purple'}}>{`${char}`}</div>;
 
-    const Items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
-    const MappingItems = Items.map((Item) => <MenuItem value={Item}>Item</MenuItem> );
+    const Items = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
 
     return (
       <div className={classes.floatContainer}>
-        
-
         <div className={classes.floatChildLeft}>
-                    {/* <label className={classes.label}>Enter value : </label> */}
-            {/* <MDBInput
-              type="textarea"
-              label="Icon Prefix"
-              rows="2"
-              icon="pencil-alt"
-              value={this.state.textAreaValue}
-              onChange={this.handleChange}
-              className={classes.submitBox}
-            /> */}
+          <h1 style={{    marginBlockStart: '0' }}>Run Optimizer</h1>
+            <div style={{paddingBottom: '5%', float: 'left', width: '100%', textAlign: 'left'}}>
+              <Typography>Select a CSV file to upload, with a max size of 10MB</Typography>
+              <form action="..." method="post" encType="multipart/form-data">
+                <input
+                  type="file"
+                  name="file"
+                  ref={(input) => { this.filesInput = input }}
+                  icon='file text outline'
+                  iconposition='left'
+                  label='Upload CSV'
+                  labelposition='right'
+                  placeholder='UploadCSV...'
+                  className={classes.uploadBtn}
+                  onChange={this.handleTextChange}
+                />
+              </form>
+            </div>
 
-              {/* <ReactTextareaAutocomplete
-                className={classes.submitBox}
-                onChange={this.handleChange}
-                loadingComponent={() => <span>Loading</span>}
-                style={{position: 'relative', minWidth: '100%', minHeight: '300px', listStyleType: 'none',}}
-                dropdownStyle={{ position: 'absolute', listStyleType: 'none', listStyleType: 'none' }}
-                listStyle={{ listStyleType: 'none' }}
-                renderToBody={true}
-                itemStyle={{fontSize: '20px'}}
-                trigger={{
-                  "v": {
-                    dataProvider: token => {
-                      return [
-                        { name: "var: ", char: "var" },
-                      ];
-                    },
-                    component: Item,
-                    output: (item) => item.name
-                  },
+            <FormControl required className={classes.formControl}>
+                <InputLabel id="total-num-col">Number of columns</InputLabel>
+                <Select
+                  labelId="total-num-col"
+                  id="total-num-col-required"
+                  value={this.props.numCol}
+                  onChange={(event) => this.handleNumCol(event)}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {Items.map((Item) => <MenuItem key={Item} value={Item}>{Item}</MenuItem> )}
+                </Select>
+                <FormHelperText>Required</FormHelperText>
+            </FormControl>
 
-                  "ma": {
-                    dataProvider: token => {
-                      return [
-                        { name: "maximize: ", char: "maximize" },
-                      ];
-                    },
-                    component: Item,
-                    output: (item) => item.name
-                  },
+            <FormControl required className={classes.formControl}>
+                <InputLabel id="col-start-index">Starting index</InputLabel>
+                <Select
+                  labelId="col-start-index"
+                  id="col-start-index-required"
+                  value={this.state.startCol}
+                  onChange={(event) => this.handleStartCol(event)}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {Items.map((Item) => <MenuItem key={Item} value={Item}>{Item}</MenuItem> )}
+                </Select>
+                <FormHelperText>Required</FormHelperText>
+            </FormControl>
 
-                  "su": {
-                    dataProvider: token => {
-                      return [
-                        { name: "subject to: ", char: "subject to" },
-                      ];
-                    },
-                    component: Item,
-                    output: (item) => item.name
-                  },
+            <FormControl required className={classes.formControl}>
+                <InputLabel id="col-end-index">End index</InputLabel>
+                <Select
+                  labelId="col-end-index"
+                  id="col-end-index-required"
+                  value={this.state.endCol}
+                  onChange={(event) => this.handleEndCol(event)}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {Items.map((Item) => <MenuItem key={Item} value={Item}>{Item}</MenuItem> )}
+                </Select>
+                <FormHelperText>Required</FormHelperText>
+            </FormControl>
 
-                  "st": {
-                    dataProvider: token => {
-                      return [
-                        { name: "step: ", char: "step" },
-                      ];
-                    },
-                    component: Item,
-                    output: (item) => item.name
-                  },
-                }}
-              /> */}
-            
-
-            {/* <button onClick={() => this.handleSubmit()}>Solve</button> */}
-
-              <FormControl required className={classes.formControl}>
-                  <InputLabel id="total-num-col">Number of columns</InputLabel>
-                  <Select
-                    labelId="total-num-col"
-                    id="total-num-col-required"
-                    value={this.state.numCol}
-                    onChange={(event) => this.handleNumCol(event)}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
-                  </Select>
-                  <FormHelperText>Required</FormHelperText>
-              </FormControl>
-
-              <FormControl required className={classes.formControl}>
-                  <InputLabel id="col-start-index">Starting index</InputLabel>
-                  <Select
-                    labelId="col-start-index"
-                    id="col-start-index-required"
-                    value={this.state.startCol}
-                    onChange={(event) => this.handleStartCol(event)}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
-                  </Select>
-                  <FormHelperText>Required</FormHelperText>
-              </FormControl>
-
-              <FormControl required className={classes.formControl}>
-                  <InputLabel id="col-end-index">End index</InputLabel>
-                  <Select
-                    labelId="col-end-index"
-                    id="col-end-index-required"
-                    value={this.state.endCol}
-                    onChange={(event) => this.handleEndCol(event)}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {Items.map((Item) => <MenuItem value={Item}>{Item}</MenuItem> )}
-                  </Select>
-                  <FormHelperText>Required</FormHelperText>
-              </FormControl>
-
-              <TextField
-                id="filled-multiline-static"
-                label="Column Weights"
-                multiline
-                style={{width: '100%', paddingBottom: '5%'}}
-                rows={7}
-                defaultValue=""
-                variant="filled"
-              />
-
-            <form action="..." method="post" encType="multipart/form-data">
-
-            <input
-              type="file"
-              name="file"
-              ref={(input) => { this.filesInput = input }}
-              icon='file text outline'
-              iconposition='left'
-              label='Upload CSV'
-              labelposition='right'
-              placeholder='UploadCSV...'
-              onChange={this.handleTextChange}
+            <TextField
+              id="filled-multiline-static"
+              label="Column Weights"
+              multiline
+              style={{width: '100%', paddingBottom: '5%'}}
+              rows={7}
+              defaultValue=""
+              variant="filled"
+              onChange={this.handleWeightChange}
             />
-            </form>
 
-            <button onClick={() => this.handleSendFile()}>
+            <button onClick={() => this.handleSendFile()} className={classes.sendBtn}>
               Send
             </button>
           </div>
@@ -448,10 +408,28 @@ class SubmitInput extends Component {
                 }
 
                 {
+                    this.state.initializeError === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Initialization Error! </Typography>
+                            <img src={x_mark} alt='X mark' style={{width: '4%'}}/>
+                        </div>
+                        : null
+                } 
+
+                {
                     this.state.uploaded === true ?
                         <div className={classes.completedTasksContainer}>
                             <Typography className={classes.completedTasks}> Uploaded </Typography>
                             <Checkmark size='medium'/>
+                        </div>
+                        : null
+                }
+
+                {
+                    this.state.uploadedError === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Upload error! </Typography>
+                            <img src={x_mark} alt='X mark' style={{width: '4%'}}/>
                         </div>
                         : null
                 }
@@ -466,6 +444,15 @@ class SubmitInput extends Component {
                 }
 
                 {
+                    this.state.generatedError === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Output file generation error! </Typography>
+                            <img src={x_mark} alt='X mark' style={{width: '4%'}}/>
+                        </div>
+                        : null
+                }
+
+                {
                     this.state.solved === true ?
                         <div className={classes.completedTasksContainer}>
                             <Typography className={classes.completedTasks}> Received output </Typography>
@@ -473,17 +460,31 @@ class SubmitInput extends Component {
                         </div>
                         : null
                 }
+
+                {
+                    this.state.solvedError === true ?
+                        <div className={classes.completedTasksContainer}>
+                            <Typography className={classes.completedTasks}> Output receive error!</Typography>
+                            <img src={x_mark} alt='X mark' style={{width: '4%'}}/>
+                        </div>
+                        : null
+                }
+
+                {
+                  this.state.solved === true ? 
+                    this.props.csvHandler(this.state.csv)
+                    :
+                    null
+                }
+
+                {
+                  this.state.solved === true ? 
+                    this.props.pageHandler(this.state)
+                    :
+                    null
+                }
             </div>
         </div>
-              {
-                    this.state.solved === true ?
-                        <CsvToHtmlTable
-                          data={this.state.csv}
-                          tableClassName="table striped hover"
-                          csvDelimiter=","
-                        />
-                        : null
-              }
       </div>
     );
   }
