@@ -15,11 +15,13 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import Solver from './Solver'
 import { CsvToHtmlTable } from 'react-csv-to-table';
 import example from './example.png';
+import homeIcon from './home_icon.png';
+import algorithmIcon from './algorithmIcon.png';
+import solutionIcon from './solutionIcon.png';
+import helpIcon from './helpIcon.png';
 
 const drawerWidth = 240;
 
@@ -213,13 +215,23 @@ export default function PersistentDrawerLeft() {
         </div>
         <Divider />
         <List>
-          {['Home', 'Solver', 'Solution'].map((text, index) => (
+          {['Home', 'Solver', 'Solution', 'About'].map((text, index) => (
             <ListItem button key={text} onClick={() => setComponent(index)}>
-              {/* 
-                // TODO: 
-                // CHANGE THESE ICONS
-              */}
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemIcon style={{maxWidth: "20%"}}>{
+                  index === 0 ? 
+                    <img src={homeIcon} alt="home icon" style={{maxWidth: '50%'}}/> 
+                    : 
+                    index === 1 ? 
+                      <img src={algorithmIcon} alt="algorithm icon" style={{maxWidth: '50%'}}/>
+                      :
+                      index === 2 ? 
+                        <img src={solutionIcon} alt="solution icon" style={{maxWidth: '50%'}}/>
+                        :
+                        index === 3 ? 
+                        <img src={helpIcon} alt="help icon" style={{maxWidth: '45%', paddingLeft: '15%'}}/>
+                        :
+                        null
+              }</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
@@ -230,8 +242,6 @@ export default function PersistentDrawerLeft() {
           [classes.contentShift]: open,
         })}
       >
-        
-
         {
             component === 0 ? 
             <div style={{
