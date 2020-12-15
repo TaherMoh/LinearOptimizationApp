@@ -94,7 +94,7 @@ public class APIHelper {
 	@PostMapping("/initialize_Params")
     public boolean initializeData(@RequestBody Params pr) {
 		numColumns = pr.getNumCol();
-		orderStart = pr.getStartCol();
+		orderStart = pr.getStartCol()+1;
 		orderEnd = pr.getEndCol();
 		weightsString = pr.getWeights();
 		weights = new ArrayList<Pair<Double,Double>>();

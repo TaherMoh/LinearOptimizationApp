@@ -19,6 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Solver from './Solver'
 import { CsvToHtmlTable } from 'react-csv-to-table';
+import example from './example.png';
 
 const drawerWidth = 240;
 
@@ -247,6 +248,42 @@ export default function PersistentDrawerLeft() {
               
               <h2>Getting Started</h2>
               <Typography>You can upload any .CSV file in the "Solver" tab to get started and pick your configuration.</Typography>
+
+              <h2>About Student Grade Optimizer</h2>
+              <Typography>
+                The student grade optimizer (SGO) uses linear optimization to optimize students grades weights.
+                
+                Given a lower and upper bound for each grade, the optimizer uses Linear Optimization 
+                (also known as Linear Programming) to find an optimal weights for grades to get the best overall
+                grade for the student.
+                
+                The SGO converts the user .CSV input combined with the inputed weights to solve for a Linear
+                objective function for each students optimal grade. The output is a .CSV file that contains 
+                the same headers (coloumn names) as the input, but for each coloumn in the selected there will be 
+                the optimal weight calculated by the algorithm to give the student the best grade. 
+                Any coloumn that was not selected to be optimized will be ignored by the algorithm and will be 
+                the same in the output file. This feature is used to perseve student names, student numbers, dates, etc.
+                Empty coloumnns or columns whose value is "-" will be treated as a 0. 
+              </Typography>
+
+              <h2>Example</h2>
+              <img src={example} alt="example picture" style={{maxWidth: '80%'}}></img>
+              <Typography>
+                  <strong>
+                    Number of columns = 6 <br/>
+                    Starting Index = 5 <br/>
+                    Ending Index = 10 <br/>
+
+                    Weights: <br/>
+                    <div style={{marginLeft: '7%'}}>0.03, 0.1 </div> 
+                    <div style={{marginLeft: '7%'}}>0.03, 0.1<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.1, 0.25<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.03, 0.1<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.1, 0.4<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.3, 0.7<br/> </div>
+                  </strong>
+                
+              </Typography>
             </div>
             : null
         }

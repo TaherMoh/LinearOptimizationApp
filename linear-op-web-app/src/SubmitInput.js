@@ -114,6 +114,16 @@ class SubmitInput extends Component {
   }
 
   handleSendFile() {
+    this.props.initializedHandler(false);
+    this.props.uploadedHandler(false);
+    this.props.generatedHandler(false);
+    this.props.solvedHandler(false);
+    this.props.initializedErrorHandler(false);
+    this.props.uploadedErrorHandler(false);
+    this.props.generatedErrorHandler(false);
+    this.props.solvedErrorHandler(false);
+
+
     let formData = new FormData();
     formData.append('file', this.props.csv);
 
@@ -250,7 +260,7 @@ class SubmitInput extends Component {
     return (
       <div className={classes.floatContainer}>
         <div className={classes.floatChildLeft}>
-          <h1 style={{    marginBlockStart: '0' }}>Run Optimizer</h1>
+          <h1 style={{    marginBlockStart: '0', paddingBottom: '10px' }}>Run Optimizer</h1>
             <div style={{paddingBottom: '5%', float: 'left', width: '100%', textAlign: 'left'}}>
               <Typography>Select a CSV file to upload, with a max size of 10MB</Typography>
               <form action="..." method="post" encType="multipart/form-data">
@@ -322,7 +332,7 @@ class SubmitInput extends Component {
               label="Column Weights"
               multiline
               style={{width: '100%', paddingBottom: '5%'}}
-              rows={7}
+              rows={12}
               variant="filled"
               onChange={this.handleWeightChange}
               value={this.props.weights}
