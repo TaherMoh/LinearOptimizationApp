@@ -86,28 +86,23 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(true);
   const [component, setComponent] = React.useState(0)
   const [csv, setCsv] = React.useState('')
-  const [page, setPage] = React.useState({
-                            textAreaValue: "",
-                            values: [],
-                            initialized: false,
-                            uploaded: false,
-                            generated: false,
-                            solved: false,
-                            csv: "",
-                            numCol: 0,
-                            startCol: 0,
-                            endCol: 0,
-                            weights: "",
-                            initializeError: false,
-                            uploadedError: false,
-                            generatedError: false,
-                            solvedError: false,
-                          })
-    const [textAreaValue, setTextAreaValue] = React.useState('')
-    const [values, setValues] = React.useState([])
-    const [initialized, setInitialized] = React.useState(false)
-    const [numCol, setNumCol] = React.useState(0)
 
+  const [textAreaValue, setTextAreaValue] = React.useState("")
+  const [values, setValues] = React.useState([])
+  const [weights, setWeights] = React.useState("")
+
+  const [numCol, setNumCol] = React.useState(0)
+  const [startCol, setStartCol] = React.useState(0)
+  const [endCol, setEndCol] = React.useState(0)
+  
+  const [initialized, setInitialized] = React.useState(false)
+  const [uploaded, setUploaded] = React.useState(false)
+  const [generated, setGenerated] = React.useState(false)
+  const [solved, setSolved] = React.useState(false)
+  const [initializeError, setInitializeError] = React.useState(false)
+  const [uploadedError, setUploadedError] = React.useState(false)
+  const [generatedError, setGeneratedError] = React.useState(false)
+  const [solvedError, setSolvedError] = React.useState(false)
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -121,12 +116,60 @@ export default function PersistentDrawerLeft() {
     setCsv(contents);
   }
   
-  const handlePage = (state) => {
-      setPage(state);
-  }
-
   const handleNumCol = (num) => {
     setNumCol(num);
+  }
+
+  const handleStartCol = (num) => {
+    setStartCol(num);
+  }
+  
+  const handleEndCol = (num) => {
+    setEndCol(num);
+  }
+
+  const hanldeInitialized = (input) => {
+    setInitialized(input);
+  }
+
+  const hanldeUploaded = (input) => {
+    setUploaded(input);
+  }  
+
+  const hanldeGenerated= (input) => {
+    setGenerated(input);
+  }  
+
+  const hanldeSolved= (input) => {
+    setSolved(input);
+  } 
+  
+  const hanldeInitializedError= (input) => {
+    setInitializeError(input);
+  }
+
+  const hanldeUploadedError= (input) => {
+    setUploadedError(input);
+  }
+
+  const hanldeGeneratedError = (input) => {
+    setGeneratedError(input);
+  }
+
+  const hanldeSolvedError= (input) => {
+    setSolvedError(input);
+  }
+
+  const hanldeTextAreaValue= (input) => {
+    setTextAreaValue(input);
+  }
+
+  const hanldeValues= (input) => {
+    setValues(input);
+  }
+
+  const hanldeWeights= (input) => {
+    setWeights(input);
   }
 
   return (
@@ -211,9 +254,41 @@ export default function PersistentDrawerLeft() {
         {
             component === 1 ? 
             <Solver 
-            csvHandler={(contents) => handleCsv(contents)} 
-            numColHanlder={(input) => handleNumCol(input)} 
-            numCol={numCol}
+              csvHandler={(contents) => handleCsv(contents)} 
+              numColHandler={(input) => handleNumCol(input)} 
+              startColHandler={(input) => handleStartCol(input)} 
+              endColHandler={(input) => handleEndCol(input)} 
+
+              initializedHandler={(input) => hanldeInitialized(input)} 
+              uploadedHandler={(input) => hanldeUploaded(input)} 
+              generatedHandler={(input) => hanldeGenerated(input)}
+              solvedHandler={(input) => hanldeSolved(input)}
+
+              initializedErrorHandler={(input) => hanldeInitializedError(input)} 
+              uploadedErrorHandler={(input) => hanldeUploadedError(input)}
+              generatedErrorHandler={(input) => hanldeGeneratedError(input)}
+              solvedErrorHandler={(input) => hanldeSolvedError(input)}
+              
+              csv={csv}
+              numCol={numCol}
+              startCol={startCol}
+              endCol={endCol}
+              initialized={initialized}
+              uploaded={uploaded}
+              generated={generated}
+              solved={solved}
+              initializeError={initializeError}
+              uploadedError={uploadedError}
+              generatedError={generatedError}
+              solvedError={solvedError}
+
+              textAreaValue={textAreaValue}
+              values={values}
+              weights={weights}
+
+              textAreaValueHandler={(input) => hanldeTextAreaValue(input)}
+              valuesHandler={(input) => hanldeValues(input)}
+              weightsHandler={(input) => hanldeWeights(input)}
             />
             : null
         }

@@ -26,9 +26,42 @@ class Solver extends Component {
         return (
             <div >
                 <SubmitInput 
-                csvHandler={this.props.csvHandler} 
-                numColHanlder={this.props.numColHanlder}
-                numCol={this.props.numCol}
+                    csvHandler={this.props.csvHandler} 
+                    numColHandler={this.props.numColHandler}
+                    numCol={this.props.numCol}
+
+                    csv={this.props.csv}
+                    startColHandler={this.props.startColHandler}
+                    startCol={this.props.startCol}
+
+                    endColHandler={this.props.endColHandler}
+                    endCol={this.props.endCol}
+
+                    initializedHandler= {this.props.initializedHandler} 
+                    uploadedHandler= {this.props.uploadedHandler} 
+                    generatedHandler= {this.props.generatedHandler}
+                    solvedHandler= {this.props.solvedHandler}
+                    initializedErrorHandler= {this.props.initializedErrorHandler} 
+                    uploadedErrorHandler= {this.props.uploadedErrorHandler}
+                    generatedErrorHandler= {this.props.generatedErrorHandler}
+                    solvedErrorHandler= {this.props.solvedErrorHandler}
+
+                    initialized={this.props.initialized}
+                    uploaded={this.props.uploaded}
+                    generated={this.props.generated}
+                    solved={this.props.solved}
+                    initializeError={this.props.initializeError}
+                    uploadedError={this.props.uploadedError}
+                    generatedError={this.props.generatedError}
+                    solvedError={this.props.solvedError}
+
+                    textAreaValue={this.props.textAreaValue}
+                    values={this.props.values}
+                    weights={this.props.weights}
+
+                    textAreaValueHandler={this.props.textAreaValueHandler}
+                    valuesHandler={this.props.valuesHandler}
+                    weightsHandler={this.props.weightsHandler}
                 />
             </div>
         )
