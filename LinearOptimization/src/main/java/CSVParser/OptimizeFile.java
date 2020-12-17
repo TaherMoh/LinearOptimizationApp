@@ -40,7 +40,8 @@ public class OptimizeFile {
             			}
             		}
             		
-            		sb.append(line.substring(line.indexOf("=")+1).trim() + ",");
+            		Double num = Double.parseDouble(line.substring(line.indexOf("=")+1).trim());
+            		sb.append(String.format("%.2f", num) + ",");
             		
             		/*
             		 * Add old values that are not going to change (right hand)
@@ -66,9 +67,14 @@ public class OptimizeFile {
         		objVal = base * Math.pow(10, exp) + "";
         	}
             
+
             oldLine = line;
         }
-        sb.append(objVal + "\n");
+        
+		Double num = Double.parseDouble(objVal);
+		
+        sb.append(String.format("%.2f", num) + "\n");
+//        sb.append(objVal + "\n");
         outputWriter.write(sb.toString());
         
         outputWriter.close();

@@ -27,10 +27,12 @@ class Solver extends Component {
             <div >
                 <SubmitInput 
                     csvHandler={this.props.csvHandler} 
+                    selectedCSVHandler={this.props.selectedCSVHandler}
                     numColHandler={this.props.numColHandler}
                     numCol={this.props.numCol}
 
                     csv={this.props.csv}
+                    selectedCSV={this.props.selectedCSV}
                     startColHandler={this.props.startColHandler}
                     startCol={this.props.startCol}
 

@@ -21,8 +21,8 @@ subject to c20: Midterm_Real_ >= 0.1;
 subject to c21: Midterm_Real_ <= 0.4;
 subject to c22: Assignment_Assignment_4_Real_ >= 0.03;
 subject to c23: Assignment_Assignment_4_Real_ <= 0.1;
-subject to c24: Externaltool_FinalExamCOMP_Real_ >= 0.3;
-subject to c25: Externaltool_FinalExamCOMP_Real_ <= 0.7;
+subject to c24: Externaltool_FinalExamCOMP_Real_ >= 0.1;
+subject to c25: Externaltool_FinalExamCOMP_Real_ <= 0.4;
 
 solve;
 

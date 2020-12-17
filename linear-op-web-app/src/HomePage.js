@@ -22,6 +22,7 @@ import homeIcon from './Images/home_icon.png';
 import algorithmIcon from './Images/algorithmIcon.png';
 import solutionIcon from './Images/solutionIcon.png';
 import helpIcon from './Images/helpIcon.png';
+import downloadIcon from './Images/download.png';
 
 const drawerWidth = 240;
 
@@ -92,7 +93,7 @@ export default function PersistentDrawerLeft() {
 
   const [textAreaValue, setTextAreaValue] = React.useState("")
   const [values, setValues] = React.useState([])
-  const [weights, setWeights] = React.useState("")
+  const [weights, setWeights] = React.useState("0.03, 0.1\n0.03, 0.1\n0.1, 0.25\n0.03, 0.1\n0.1, 0.4\n0.03, 0.1")
 
   const [numCol, setNumCol] = React.useState(0)
   const [startCol, setStartCol] = React.useState(0)
@@ -106,6 +107,7 @@ export default function PersistentDrawerLeft() {
   const [uploadedError, setUploadedError] = React.useState(false)
   const [generatedError, setGeneratedError] = React.useState(false)
   const [solvedError, setSolvedError] = React.useState(false)
+  const [selectedCSV, setSelectedCSV] = React.useState('')
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -173,6 +175,19 @@ export default function PersistentDrawerLeft() {
 
   const hanldeWeights= (input) => {
     setWeights(input);
+  }
+
+  const handleSelectedCSV= (input) => {
+    setSelectedCSV(input);
+  }
+
+  const downloadCSVFile = (input) => {
+    const element = document.createElement("a");
+    const file = new Blob([input], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "grades.csv";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
   }
 
   return (
@@ -315,8 +330,10 @@ export default function PersistentDrawerLeft() {
               uploadedErrorHandler={(input) => hanldeUploadedError(input)}
               generatedErrorHandler={(input) => hanldeGeneratedError(input)}
               solvedErrorHandler={(input) => hanldeSolvedError(input)}
-              
+              selectedCSVHandler={(input) => handleSelectedCSV(input)}
+
               csv={csv}
+              selectedCSV={selectedCSV}
               numCol={numCol}
               startCol={startCol}
               endCol={endCol}
@@ -345,13 +362,29 @@ export default function PersistentDrawerLeft() {
             csv === '' ? 
               <h1 style={{marginTop: '5%'}}>No solution yet!</h1>
               :
-              <div style={{marginTop: '5%'}}>
-                <CsvToHtmlTable
-                  data={csv}
-                  tableClassName="table striped hover"
-                  csvDelimiter=","
-                />
+              <div>
+                <div>
+                  <img 
+                    src={downloadIcon} 
+                    onClick={() => downloadCSVFile(csv)}
+                    style={{
+                      maxWidth: '2.5%',
+                      float: 'left',
+                      marginRight: '50%',
+                      marginLeft: '50%',
+                      paddingBottom: '1%',
+                    }}
+                    />
+                </div>
+                <div style={{marginTop: '5%'}}>
+                  <CsvToHtmlTable
+                    data={csv}
+                    tableClassName="table striped hover"
+                    csvDelimiter=","
+                  />
+                </div>
               </div>
+              
           :
           null
         }

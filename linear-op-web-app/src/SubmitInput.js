@@ -10,6 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import x_mark from './Images/x_mark2.png';
+import { CsvToHtmlTable } from 'react-csv-to-table';
 
 const styles = theme => ({
   submitBox: {
@@ -52,6 +53,7 @@ const styles = theme => ({
   floatContainer: {
     maxHeight: '100%',
     marginTop: '5%',
+    marginBottom: '5%',
   },
 
   floatChild: {
@@ -87,6 +89,10 @@ const styles = theme => ({
     width: '100%',
     height: '5%',
     borderRadius: '5px',
+  },
+
+  table: {
+    minWidth: '100%',
   }
 });
 
@@ -102,9 +108,16 @@ class SubmitInput extends Component {
     this.props.textAreaValueHandler(event.target.value);
   }
 
-  handleTextChange = (event) => {
-    this.props.csvHandler(event.target.files[0]);
-    console.log(this.props.csv);
+  handleTextChange = (e) => {
+    this.props.csvHandler(e.target.files[0]);
+
+    e.preventDefault();
+    const reader = new FileReader()
+    reader.onload = async (e) => { 
+      const text = (e.target.result);
+      this.props.selectedCSVHandler(text);
+    };
+    reader.readAsText(e.target.files[0]);
   }
 
   handleWeightChange = (event) => {
@@ -159,7 +172,7 @@ class SubmitInput extends Component {
     })
     .then(function () {
       // Fetch another API
-      return fetch('http://localhost:8080/test_FileUpload', requestOptions);
+      return fetch('http://localhost:8080/fileUpload', requestOptions);
     })
     .then(function (response) {
       if (response.ok) {
@@ -258,6 +271,7 @@ class SubmitInput extends Component {
     const Items = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
 
     return (
+      <div>
       <div className={classes.floatContainer}>
         <div className={classes.floatChildLeft}>
           <h1 style={{    marginBlockStart: '0', paddingBottom: '10px' }}>Run Optimizer</h1>
@@ -419,6 +433,15 @@ class SubmitInput extends Component {
 
             </div>
         </div>
+      </div>
+      {
+        this.props.selectedCSV === '' ? null : 
+        <CsvToHtmlTable
+              data={this.props.selectedCSV}
+              tableClassName="table striped hover"
+              csvDelimiter=","
+            />
+      }
       </div>
     );
   }

@@ -46,19 +46,6 @@ public class APIHelper {
 	static String weightsString;
 	static List<Pair<Double,Double>> weights; 
 	static String uploadFileName;
-
-	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping("/test_Multi")
-	public static HashMap<String, String> testMulti(@RequestBody String formula) throws IOException, InterruptedException {
-	    
-		Solver.generateSolver(formula);
-		
-		TimeUnit.SECONDS.sleep(3);
-		
-		Application.restart();
-		
-		return GeneratedSolver.solve();
-	}
 	
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/get_CSV")
@@ -69,7 +56,7 @@ public class APIHelper {
 	}
 	
 	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping("/test_FileUpload")
+	@PostMapping("/fileUpload")
     public boolean ingestDataFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
      if (file.isEmpty()) {
                 redirectAttributes.addFlashAttribute("message", "No File is Present");
@@ -81,7 +68,7 @@ public class APIHelper {
                 byte[] bytes = file.getBytes();
                 Path path = Paths.get("synthesized_grades.csv");
                 Files.write(path, bytes);
-                System.out.println("UPLOADED :!!:!:!");
+                System.out.println("File successfully uploaded and saved into synthesized_grades.csv");
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -112,25 +99,12 @@ public class APIHelper {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/run_Optimizer")
 	public static boolean runOptimizer() throws IOException {
-		
-//		/*
-//		 * TODO:
-//		 * 	- Change these values to be passed in from front-end UI.
-//		 */
-//		int numColumns = 7;
-//		int orderStart = 6;
-//		int orderEnd = 11;
-		
-		System.out.println(numColumns + " " + orderStart + " " + orderEnd);
-		
-//		weights.add(new Pair<Double, Double>(0.03, 0.10));
-//		weights.add(new Pair<Double, Double>(0.03, 0.10));
-//		weights.add(new Pair<Double, Double>(0.1, 0.25));
-//		weights.add(new Pair<Double, Double>(0.03, 0.10));
-//		weights.add(new Pair<Double, Double>(0.1, 0.40));
-//		weights.add(new Pair<Double, Double>(0.03, 0.1));
-//		weights.add(new Pair<Double, Double>(0.3, 0.70));
-//		
+		System.out.println("number of col:" + numColumns + "\n" + 
+							"starting index:" + orderStart + "\n" + 
+							"ending index:" + orderEnd + "\n" + 
+							"weights string:" + weightsString + "\n" + 
+							"upload file name:" + uploadFileName);
+
 		/*
 		 * This file will be uploaded from the UI first, when its uploaded it will be read here. 
 		 */
@@ -245,7 +219,8 @@ public class APIHelper {
         	
         	// Handling remaining constraints
         	StringBuilder sb = new StringBuilder();
-        	int count = 12;
+        	int count = 12;        	
+        	
         	for(int w=0; w<components.size(); w++) {
         		sb.append("subject to c"+ (count) + ": ");
         		sb.append(components.get(w) + " >= " + weights.get(w).getL() + ";");
@@ -258,28 +233,20 @@ public class APIHelper {
         		count++;        		
         	}
         	
-        	writer.write(sb.toString() + "\n");
-//        	System.out.println(sb.toString());
-        	
-        	
+        	writer.write(sb.toString() + "\n");        	
         	writer.write("solve;\n\n");
-//        	System.out.println("solve; \n");
         	
         	for(String s: components) {
         		writer.write("display " + s + ";\n");
-//        		System.out.println("display " + s + ";");
         	}
         	
         	writer.write("\nend;\n");
-//        	System.out.println("\nend;");
-
         	writer.close();
         	
         	OptimizeFile.optimizeStudentGrade(components, componentSplit.length, orderStart, orderEnd
         			, sameComponentsBefore, sameComponentsAfter);
-        	
-//        	System.out.println("\n\n");
-        	// End of row parsing / processing
+
+        	// End of row parsing + processing
         }
 		return true;
 	}
