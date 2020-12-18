@@ -1,0 +1,6 @@
+solver\GeneratedSolver.class
+solver\Solver.class
+api\Application.class
+solver\ConstrainedVariable.class
+api\APIHelper.class
+solver\InputParser.class
