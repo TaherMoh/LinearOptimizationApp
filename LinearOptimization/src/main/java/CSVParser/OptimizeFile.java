@@ -75,7 +75,36 @@ public class OptimizeFile {
         
 		Double num = Double.parseDouble(objVal);
 		
-        sb.append(String.format("%.2f", num) + "\n");
+        sb.append(String.format("%.2f", num) + ",");
+        
+        if(num >= 90) {
+        	sb.append("A+\n");
+        } else if(num >= 85) {
+        	sb.append("A\n");
+        } else if (num >= 80) {
+        	sb.append("A-\n");
+        } else if (num >= 77) {
+        	sb.append("B+\n");
+        } else if (num >=73) {
+        	sb.append("B\n");
+        } else if (num >= 70) {
+        	sb.append("B-\n");
+        } else if (num >= 67) {
+        	sb.append("C+\n");
+        } else if (num >= 63) {
+        	sb.append("C\n");
+        } else if (num >= 60) {
+        	sb.append("C-\n");
+        } else if (num >= 57) {
+        	sb.append("D+\n");
+        } else if (num >= 53) {
+        	sb.append("D\n");
+        } else if (num >= 50) {
+        	sb.append("D-\n");
+        } else {
+        	sb.append("F\n");
+        }
+        
 //        sb.append(objVal + "\n");
         outputWriter.write(sb.toString());
         
