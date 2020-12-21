@@ -123,7 +123,7 @@ public class APIHelper {
          * Create empty output file
          */
         BufferedWriter outputWriter = new BufferedWriter(new FileWriter("synthesized_grades_output.csv"));
-        outputWriter.write(componentTitles + ",total\n");
+        outputWriter.write(componentTitles + ",total,Letter Grade\n");
         outputWriter.close();
         
         /*

@@ -305,7 +305,8 @@ export default function PersistentDrawerLeft() {
                     <div style={{marginLeft: '7%'}}>0.1, 0.25<br/> </div>
                     <div style={{marginLeft: '7%'}}>0.03, 0.1<br/> </div>
                     <div style={{marginLeft: '7%'}}>0.1, 0.4<br/> </div>
-                    <div style={{marginLeft: '7%'}}>0.3, 0.7<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.1, 0.4<br/> </div>
+                    <div style={{marginLeft: '7%'}}>0.1, 0.4<br/> </div>
                   </strong>
                 
               </Typography>
